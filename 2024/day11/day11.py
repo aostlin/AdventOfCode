@@ -1,29 +1,28 @@
-
-def task1(input_stones):
+def task(input_stones):
     total_stones = 0
+    global memo
+    memo = {}
     for stone in input_stones:
         iteration = 0
-        number_of_stones = 0
-        number_of_stones = blink(stone, number_of_stones, iteration)
-        total_stones += number_of_stones
+        total_stones += blink(stone, iteration)
     return total_stones
 
 
-def blink(stone, number_of_stones, iteration):
-    if iteration == 25:
-        number_of_stones += 1
-        return number_of_stones
-    
+def blink(stone, iteration):
     iteration += 1
+    if (stone, iteration) in memo:
+        return memo[(stone, iteration)]
+    if iteration == 76:
+        return 1
+    
     if stone == 0:
-        number_of_stones = blink(1, number_of_stones, iteration)
+        memo.update({(stone, iteration) : blink(1, iteration)})
     elif len(str(stone)) % 2 == 0:
         stone1, stone2 = split_stone(stone)
-        number_of_stones = blink(stone1, number_of_stones, iteration)
-        number_of_stones = blink(stone2, number_of_stones, iteration)
+        memo.update({(stone, iteration) : blink(stone1, iteration) + blink(stone2, iteration)})
     else:
-        number_of_stones = blink(stone * 2024, number_of_stones, iteration)
-    return number_of_stones
+        memo.update({(stone, iteration) : blink(stone * 2024, iteration)})
+    return memo[(stone, iteration)]
 
 
 def split_stone(stone):
@@ -40,5 +39,5 @@ if __name__ == "__main__":
     input_stones = input_string.split()
     input_stones = [int(x) for x in input_stones]
 
-    print(task1(input_stones))
+    print(task(input_stones))
 
